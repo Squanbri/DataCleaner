@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="DataCleaner.Api/DataCleaner.Api.csproj" />
+  <Project Path="DataCleaner.Tests/DataCleaner.Tests.csproj" />
+</Solution>
