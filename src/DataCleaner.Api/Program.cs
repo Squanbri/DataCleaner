@@ -24,6 +24,7 @@ builder.Services.AddSingleton<BirthDateParser>();
 builder.Services.AddSingleton<CityNormalizer>();
 builder.Services.AddSingleton<RecordNormalizer>();
 builder.Services.AddScoped<ImportService>();
+builder.Services.AddScoped<DeduplicationService>();
 
 var app = builder.Build();
 

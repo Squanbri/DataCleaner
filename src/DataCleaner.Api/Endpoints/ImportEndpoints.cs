@@ -16,6 +16,9 @@ public static class ImportEndpoints
         group.MapGet("/{id:int}", GetImportAsync)
             .WithName("GetImport");
 
+        group.MapGet("/{id:int}/duplicates", GetDuplicatesAsync)
+            .WithName("GetImportDuplicates");
+
         return group;
     }
 
@@ -44,5 +47,21 @@ public static class ImportEndpoints
     {
         var batch = await imports.GetBatchAsync(id, cancellationToken);
         return batch is null ? TypedResults.NotFound() : TypedResults.Ok(batch);
+    }
+
+    private static async Task<IResult> GetDuplicatesAsync(
+        int id,
+        ImportService imports,
+        DeduplicationService deduplication,
+        CancellationToken cancellationToken)
+    {
+        var batch = await imports.GetBatchAsync(id, cancellationToken);
+        if (batch is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var groups = await deduplication.GetDuplicateGroupsAsync(id, cancellationToken);
+        return TypedResults.Ok(groups);
     }
 }

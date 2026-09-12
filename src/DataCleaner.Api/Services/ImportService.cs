@@ -13,6 +13,7 @@ namespace DataCleaner.Api.Services;
 public sealed class ImportService(
     AppDbContext db,
     RecordNormalizer recordNormalizer,
+    DeduplicationService deduplication,
     ILogger<ImportService> logger)
 {
     private const int BatchSize = 1000;
@@ -74,7 +75,8 @@ public sealed class ImportService(
                 buffer.Clear();
             }
 
-            // Deduplication is added in step 5.
+            // ChangeTracker was cleared during chunk inserts; dedupe loads records by batch id.
+            await deduplication.FindDuplicatesAsync(batch.Id, cancellationToken);
 
             // ChangeTracker.Clear() detached the batch during chunk inserts.
             var completed = await db.ImportBatches.FirstAsync(b => b.Id == batch.Id, cancellationToken);
