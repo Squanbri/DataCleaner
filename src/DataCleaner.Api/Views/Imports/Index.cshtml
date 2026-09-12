@@ -1,0 +1,50 @@
+@model IReadOnlyList<ImportBatchDto>
+@{
+    ViewData["Title"] = "Загрузки";
+}
+
+<h1>Загрузки</h1>
+
+<article>
+    <h2>Новый файл</h2>
+    <form asp-action="Upload" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="All"></div>
+        <label>
+            CSV
+            <input type="file" name="file" accept=".csv,text/csv" required />
+        </label>
+        <button type="submit">Загрузить и очистить</button>
+    </form>
+</article>
+
+<figure>
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Файл</th>
+            <th>Статус</th>
+            <th>Строк</th>
+            <th>Создан</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @if (Model.Count == 0)
+        {
+            <tr><td colspan="6" class="muted">Пока нет загрузок. Возьмите <code>samples/customers.csv</code>.</td></tr>
+        }
+        @foreach (var batch in Model)
+        {
+            <tr>
+                <td>@batch.Id</td>
+                <td>@batch.FileName</td>
+                <td>@batch.Status</td>
+                <td>@batch.TotalRows</td>
+                <td>@batch.CreatedAt.ToLocalTime().ToString("g")</td>
+                <td><a asp-action="Details" asp-route-id="@batch.Id">Отчёт</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</figure>

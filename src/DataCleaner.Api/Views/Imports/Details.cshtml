@@ -1,0 +1,76 @@
+@model QualityReportDto
+@{
+    ViewData["Title"] = $"Отчёт #{Model.BatchId}";
+    var batch = (ImportBatchDto)ViewBag.Batch;
+}
+
+<h1>Отчёт по загрузке #@Model.BatchId</h1>
+<p class="muted">@batch.FileName · @batch.Status · @batch.TotalRows строк</p>
+
+<p>
+    <a asp-action="Records" asp-route-id="@Model.BatchId">Записи</a> ·
+    <a asp-action="Duplicates" asp-route-id="@Model.BatchId">Дубли</a> ·
+    <a asp-action="Index">К списку</a>
+</p>
+
+<div class="grid">
+    <article>
+        <header>Всего</header>
+        <h2>@Model.TotalRecords</h2>
+    </article>
+    <article>
+        <header>Без проблем</header>
+        <h2>@Model.CleanRecords</h2>
+    </article>
+    <article>
+        <header>С проблемами</header>
+        <h2>@Model.RecordsWithIssues</h2>
+    </article>
+    <article>
+        <header>Групп дублей</header>
+        <h2>@Model.DuplicateGroupCount</h2>
+        <p class="muted">@Model.RecordsInDuplicateGroups записей в группах</p>
+    </article>
+</div>
+
+<article>
+    <h3>Проблемы</h3>
+    <figure>
+        <table>
+            <thead><tr><th>Тип</th><th>Количество</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var (name, count) in Model.IssueCounts)
+            {
+                <tr>
+                    <td>@name</td>
+                    <td>@count</td>
+                    <td>
+                        @if (Enum.TryParse<QualityIssues>(name, out var issueFlag) && count > 0)
+                        {
+                            <a asp-action="Records" asp-route-id="@Model.BatchId" asp-route-issue="@issueFlag">Показать</a>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </figure>
+</article>
+
+<article>
+    <h3>Заполненность полей</h3>
+    <figure>
+        <table>
+            <thead><tr><th>Поле</th><th>%</th></tr></thead>
+            <tbody>
+            @foreach (var (name, rate) in Model.FieldFillRates)
+            {
+                <tr>
+                    <td>@name</td>
+                    <td>@(Math.Round(rate * 100, 1))%</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </figure>
+</article>

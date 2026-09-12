@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — DataCleaner</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2/css/pico.min.css" />
+    <style>
+        mark.issue { background: #ffe08a; padding: 0.1rem 0.25rem; }
+        .muted { color: var(--pico-muted-color); }
+        table td, table th { vertical-align: top; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+<header class="container">
+    <nav>
+        <ul>
+            <li><strong><a href="/">DataCleaner</a></strong></li>
+        </ul>
+        <ul>
+            <li><a href="/scalar" target="_blank" rel="noopener">API (Scalar)</a></li>
+        </ul>
+    </nav>
+</header>
+<main class="container">
+    @RenderBody()
+</main>
+</body>
+</html>

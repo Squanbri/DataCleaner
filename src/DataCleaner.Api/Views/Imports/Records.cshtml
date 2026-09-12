@@ -1,0 +1,115 @@
+@model PagedResultDto<CustomerRecordDto>
+@{
+    ViewData["Title"] = "Записи";
+    var batch = (ImportBatchDto)ViewBag.Batch;
+    QualityIssues? issue = ViewBag.Issue;
+}
+
+<h1>Записи загрузки #@batch.Id</h1>
+<p class="muted">
+    @(issue is null ? "Все записи" : $"Фильтр: {issue}") ·
+    страница @Model.Page из @(Model.TotalPages == 0 ? 1 : Model.TotalPages) ·
+    всего @Model.TotalItems
+</p>
+
+<p>
+    <a asp-action="Details" asp-route-id="@batch.Id">Отчёт</a> ·
+    <a asp-action="Records" asp-route-id="@batch.Id">Все</a> ·
+    <a asp-action="Records" asp-route-id="@batch.Id" asp-route-issue="@QualityIssues.InvalidPhone">InvalidPhone</a> ·
+    <a asp-action="Records" asp-route-id="@batch.Id" asp-route-issue="@QualityIssues.InvalidEmail">InvalidEmail</a> ·
+    <a asp-action="Records" asp-route-id="@batch.Id" asp-route-issue="@QualityIssues.MissingName">MissingName</a> ·
+    <a asp-action="Records" asp-route-id="@batch.Id" asp-route-issue="@QualityIssues.InvalidBirth">InvalidBirth</a> ·
+    <a asp-action="Records" asp-route-id="@batch.Id" asp-route-issue="@QualityIssues.MissingContact">MissingContact</a>
+</p>
+
+<figure>
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Было (ФИО / телефон / email)</th>
+            <th>Стало</th>
+            <th>Issues</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var r in Model.Items)
+        {
+            <tr>
+                <td>@r.RowNumber</td>
+                <td>
+                    <div>@r.RawFullName</div>
+                    <div class="muted">@r.RawPhone</div>
+                    <div class="muted">@r.RawEmail</div>
+                    <div class="muted">@r.RawBirthDate · @r.RawCity</div>
+                </td>
+                <td>
+                    <div>
+                        @if (r.Issues.HasFlag(QualityIssues.MissingName))
+                        {
+                            <mark class="issue">@(r.LastName ?? "—") @(r.FirstName) @(r.MiddleName)</mark>
+                        }
+                        else
+                        {
+                            @($"{r.LastName} {r.FirstName} {r.MiddleName}".Trim())
+                        }
+                    </div>
+                    <div>
+                        @if (r.Issues.HasFlag(QualityIssues.InvalidPhone) || (r.Issues.HasFlag(QualityIssues.MissingContact) && r.Phone is null))
+                        {
+                            <mark class="issue">@(r.Phone ?? "—")</mark>
+                        }
+                        else
+                        {
+                            @(r.Phone ?? "—")
+                        }
+                    </div>
+                    <div>
+                        @if (r.Issues.HasFlag(QualityIssues.InvalidEmail) || (r.Issues.HasFlag(QualityIssues.MissingContact) && r.Email is null))
+                        {
+                            <mark class="issue">@(r.Email ?? "—")</mark>
+                        }
+                        else
+                        {
+                            @(r.Email ?? "—")
+                        }
+                    </div>
+                    <div>
+                        @if (r.Issues.HasFlag(QualityIssues.InvalidBirth))
+                        {
+                            <mark class="issue">@(r.BirthDate?.ToString("yyyy-MM-dd") ?? "—")</mark>
+                        }
+                        else
+                        {
+                            @(r.BirthDate?.ToString("yyyy-MM-dd") ?? "—")
+                        }
+                        · @(r.City ?? "—")
+                    </div>
+                </td>
+                <td>@r.Issues</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</figure>
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul>
+            @if (Model.Page > 1)
+            {
+                <li>
+                    <a asp-action="Records" asp-route-id="@batch.Id" asp-route-issue="@issue" asp-route-page="@(Model.Page - 1)">Назад</a>
+                </li>
+            }
+            <li>Стр. @Model.Page / @Model.TotalPages</li>
+            @if (Model.Page < Model.TotalPages)
+            {
+                <li>
+                    <a asp-action="Records" asp-route-id="@batch.Id" asp-route-issue="@issue" asp-route-page="@(Model.Page + 1)">Вперёд</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

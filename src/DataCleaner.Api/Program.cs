@@ -13,6 +13,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 builder.Services.AddOpenApi();
+builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(o => o
     .UseNpgsql(builder.Configuration.GetConnectionString("Default"))
     .UseSnakeCaseNamingConvention());
@@ -25,6 +26,7 @@ builder.Services.AddSingleton<CityNormalizer>();
 builder.Services.AddSingleton<RecordNormalizer>();
 builder.Services.AddScoped<ImportService>();
 builder.Services.AddScoped<DeduplicationService>();
+builder.Services.AddScoped<QualityReportService>();
 
 var app = builder.Build();
 
@@ -35,6 +37,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.MapImportEndpoints();
+app.MapReportEndpoints();
+app.MapControllerRoute("default", "{controller=Imports}/{action=Index}/{id?}");
 
 app.Run();

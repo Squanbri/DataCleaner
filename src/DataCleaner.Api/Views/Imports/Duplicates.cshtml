@@ -1,0 +1,42 @@
+@model IReadOnlyList<DuplicateGroupDto>
+@{
+    ViewData["Title"] = "Дубли";
+    var batch = (ImportBatchDto)ViewBag.Batch;
+}
+
+<h1>Дубли загрузки #@batch.Id</h1>
+<p class="muted">@Model.Count групп</p>
+<p>
+    <a asp-action="Details" asp-route-id="@batch.Id">Отчёт</a> ·
+    <a asp-action="Records" asp-route-id="@batch.Id">Записи</a>
+</p>
+
+@foreach (var group in Model)
+{
+    <article>
+        <header>Группа #@group.Id · @group.MatchReason · @group.Records.Count записей</header>
+        <figure>
+            <table>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Сырое ФИО</th>
+                    <th>Телефон</th>
+                    <th>Email</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var r in group.Records)
+                {
+                    <tr>
+                        <td>@r.RowNumber</td>
+                        <td>@r.RawFullName</td>
+                        <td>@r.RawPhone → @(r.Phone ?? "—")</td>
+                        <td>@r.RawEmail → @(r.Email ?? "—")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </figure>
+    </article>
+}
