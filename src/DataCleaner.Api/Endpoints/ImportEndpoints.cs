@@ -36,8 +36,8 @@ public static class ImportEndpoints
         }
 
         await using var stream = file.OpenReadStream();
-        var result = await imports.ImportAsync(stream, file.FileName, cancellationToken);
-        return TypedResults.Ok(result);
+        var result = await imports.AcceptAsync(stream, file.FileName, cancellationToken);
+        return TypedResults.Accepted($"/api/imports/{result.Id}", result);
     }
 
     private static async Task<IResult> GetImportAsync(

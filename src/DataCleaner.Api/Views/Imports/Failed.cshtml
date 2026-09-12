@@ -1,0 +1,14 @@
+@model ImportBatchDto
+@{
+    ViewData["Title"] = $"Ошибка #{Model.Id}";
+}
+
+<h1>Загрузка #@Model.Id не удалась</h1>
+<p class="muted">@Model.FileName · @Model.Status</p>
+
+<article>
+    <h2>Ошибка</h2>
+    <p>@(Model.ErrorMessage ?? "Неизвестная ошибка")</p>
+</article>
+
+<p><a asp-action="Index">К списку загрузок</a></p>

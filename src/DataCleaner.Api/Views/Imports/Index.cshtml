@@ -10,6 +10,7 @@
     <p class="muted">
         Нет своего CSV?
         <a asp-controller="Samples" asp-action="Generate">Сгенерируйте тестовый файл с битыми данными</a>.
+        Загрузка отвечает сразу (202), очистка идёт в фоне через RabbitMQ.
     </p>
     <form asp-action="Upload" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="All"></div>
@@ -40,15 +41,27 @@
         }
         @foreach (var batch in Model)
         {
+            var inProgress = batch.Status is ImportStatus.Pending or ImportStatus.Processing;
             <tr>
                 <td>@batch.Id</td>
                 <td>@batch.FileName</td>
-                <td>@batch.Status</td>
+                <td>
+                    @batch.Status
+                    @if (inProgress)
+                    {
+                        <span class="muted">(идёт…)</span>
+                    }
+                </td>
                 <td>@batch.TotalRows</td>
                 <td>@batch.CreatedAt.ToLocalTime().ToString("g")</td>
-                <td><a asp-action="Details" asp-route-id="@batch.Id">Отчёт</a></td>
+                <td><a asp-action="Details" asp-route-id="@batch.Id">@(inProgress ? "Статус" : "Отчёт")</a></td>
             </tr>
         }
         </tbody>
     </table>
 </figure>
+
+@if (Model.Any(b => b.Status is ImportStatus.Pending or ImportStatus.Processing))
+{
+    <meta http-equiv="refresh" content="3" />
+}

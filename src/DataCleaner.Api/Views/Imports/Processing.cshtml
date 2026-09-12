@@ -1,0 +1,20 @@
+@model ImportBatchDto
+@{
+    ViewData["Title"] = $"Обработка #{Model.Id}";
+}
+
+<meta http-equiv="refresh" content="3" />
+
+<h1>Загрузка #@Model.Id</h1>
+<p class="muted">@Model.FileName</p>
+
+<article>
+    <h2>Статус: @Model.Status</h2>
+    <p>
+        Файл принят и обрабатывается в фоне через RabbitMQ.
+        Страница обновится автоматически через несколько секунд.
+    </p>
+    <p class="muted">Создано: @Model.CreatedAt.ToLocalTime().ToString("g")</p>
+</article>
+
+<p><a asp-action="Index">К списку загрузок</a></p>

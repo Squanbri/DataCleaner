@@ -4,6 +4,7 @@ public class ImportBatch
 {
     public int Id { get; set; }
     public required string FileName { get; set; }
+    public string? FilePath { get; set; }
     public ImportStatus Status { get; set; }
     public int TotalRows { get; set; }
     public string? ErrorMessage { get; set; }

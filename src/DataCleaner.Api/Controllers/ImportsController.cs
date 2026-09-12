@@ -39,7 +39,7 @@ public class ImportsController(
         }
 
         await using var stream = file!.OpenReadStream();
-        var result = await imports.ImportAsync(stream, file.FileName, cancellationToken);
+        var result = await imports.AcceptAsync(stream, file.FileName, cancellationToken);
         return RedirectToAction(nameof(Details), new { id = result.Id });
     }
 
@@ -50,6 +50,16 @@ public class ImportsController(
         if (batch is null)
         {
             return NotFound();
+        }
+
+        if (batch.Status is ImportStatus.Pending or ImportStatus.Processing)
+        {
+            return View("Processing", batch);
+        }
+
+        if (batch.Status == ImportStatus.Failed)
+        {
+            return View("Failed", batch);
         }
 
         var report = await reports.GetReportAsync(id, cancellationToken);

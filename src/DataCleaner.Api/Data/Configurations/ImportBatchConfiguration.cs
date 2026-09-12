@@ -9,6 +9,7 @@ public class ImportBatchConfiguration : IEntityTypeConfiguration<ImportBatch>
     public void Configure(EntityTypeBuilder<ImportBatch> builder)
     {
         builder.Property(x => x.FileName).HasMaxLength(512).IsRequired();
+        builder.Property(x => x.FilePath).HasMaxLength(1024);
         builder.Property(x => x.ErrorMessage).HasMaxLength(4000);
         builder.Property(x => x.Status).HasConversion<string>().HasMaxLength(32);
 
