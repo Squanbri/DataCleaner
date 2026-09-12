@@ -27,6 +27,7 @@ builder.Services.AddSingleton<RecordNormalizer>();
 builder.Services.AddScoped<ImportService>();
 builder.Services.AddScoped<DeduplicationService>();
 builder.Services.AddScoped<QualityReportService>();
+builder.Services.AddSingleton<SampleDataGenerator>();
 
 var app = builder.Build();
 

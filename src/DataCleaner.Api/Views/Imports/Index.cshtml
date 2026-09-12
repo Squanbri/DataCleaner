@@ -7,6 +7,10 @@
 
 <article>
     <h2>Новый файл</h2>
+    <p class="muted">
+        Нет своего CSV?
+        <a asp-controller="Samples" asp-action="Generate">Сгенерируйте тестовый файл с битыми данными</a>.
+    </p>
     <form asp-action="Upload" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="All"></div>
         <label>
