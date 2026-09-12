@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataCleaner.Api\DataCleaner.Api.csproj" />
+    <ProjectReference Include="..\..\src\DataCleaner.Api\DataCleaner.Api.csproj" />
   </ItemGroup>
 
 </Project>
